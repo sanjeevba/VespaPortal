@@ -8,14 +8,13 @@ etplid_required = false;
 $(document).ready(() => {
 // Pass guid of Application to Confirm Step
     var guid = sessionStorage.getItem('grantGuid');
-    alert('Grant '+guid);
 		$('#liquid_form').attr('action', $('#liquid_form').attr('action')+ '&grantguid='+guid);
 //
    $('#ees_portaloccupationattached').hide();
    $('#ees_portaloccupationattached_label').hide();
     $(".input-group-addon").hide();
-    $(".list-group-item:gt(5)").hide();
-    $(".list-group-item:eq(4)").hide();
+  //  $(".list-group-item:gt(5)").hide();
+  //  $(".list-group-item:eq(4)").hide();
     $(".input-group-btn").hide();
 //KSB 10/24/2022 Added for story 6577 Remove grey line under average hourly wage
     $(".input-group-addon").hide();

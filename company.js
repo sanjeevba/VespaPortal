@@ -5,6 +5,8 @@ outofState=sessionStorage.getItem('Out of State');
 gguid = "";
 $(document).ready(() => {
 debugger; // Company  
+if (sessionStorage.getItem('requestGuid') == null)
+   createTrainingPlan();
 $("#ees_associatedbusiness_name").hide();
 $("#ees_associatedbusiness_label").hide();
 
@@ -27,8 +29,8 @@ if(roles.contains("Administrators")  ||  roles.contains("Authenticated")  )
        role = "Anonymous";
    }
 
-  $(".list-group-item:gt(5)").hide();
-  $(".list-group-item:eq(4)").hide();
+// $(".list-group-item:gt(5)").hide();
+//  $(".list-group-item:eq(4)").hide();
 //  $(".text-muted").hide();
   $(".clearlookupfield").hide();
    var lastStep = sessionStorage.getItem("applicationStep");
@@ -161,6 +163,43 @@ $("#ees_applicationstatus").closest("td").hide();
       
  
 });
+
+
+function createTrainingPlan() {
+ // alert('create Training Plan');
+  var grantGuid = $("#EntityFormView_EntityID").val();
+  sessionStorage.setItem('grantGuid',grantGuid);
+    var dataObject = {
+       "ees_ManyGrantDetailstotheGrantAppliId@odata.bind": "/ees_grantapplicantses("+grantGuid+")"
+      };
+webapi.safeAjax({
+      type: "POST",
+      url: "/_api/ees_grantapplicationdetailses",
+      contentType: "application/json",
+      data: JSON.stringify(dataObject),
+      success: function(res, status, xhr) {
+		  tpguid = xhr.getResponseHeader("entityid");
+        sessionStorage.setItem('requestGuid',tpguid);
+        createOccupationRelatedEntity(tpguid);
+        }
+    });
+  }
+
+function createOccupationRelatedEntity(requestGuid) {
+  var dataObject = {   
+      "ees_TrainingPlan@odata.bind": "/ees_grantapplicantses("+requestGuid+")",  
+  } 
+    webapi.safeAjax({
+      type: "POST",
+      url: "/_api/ees_occupationrelatedentities",
+      contentType: "application/json",
+      data: JSON.stringify(dataObject),
+      success: function(res, status, xhr) {
+        // Enable button //
+        sessionStorage.setItem('occupationRelatedGuid',xhr.getResponseHeader("entityid"));
+        }
+    });
+  }
 
 function updateStatusandType() {
 // Draft
@@ -383,3 +422,34 @@ function sleep(milliseconds) {
                 }
             }
         }
+
+        
+// Global Ajax Web Api proxy
+  // Wrapper provided by Microsoft
+  
+  (function (webapi, $) {
+    function safeAjax(ajaxOptions) {
+      const deferredAjax = $.Deferred();
+      shell.getTokenDeferred().done((token) => {
+        // add headers for AJAX
+        if (!ajaxOptions.headers) {
+          $.extend(ajaxOptions, {
+            headers: {
+              __RequestVerificationToken: token,
+            },
+          });
+        } else {
+          ajaxOptions.headers.__RequestVerificationToken = token;
+        }
+        $.ajax(ajaxOptions)
+          .done((data, textStatus, jqXHR) => {
+            validateLoginSession(data, textStatus, jqXHR, deferredAjax.resolve);
+          }).fail(deferredAjax.reject); // AJAX
+      }).fail(function () {
+        deferredAjax.rejectWith(this, arguments); // on token failure pass the token AJAX and args
+      });
+      return deferredAjax.promise();
+    }
+    webapi.safeAjax = safeAjax;
+  }(window.webapi = window.webapi || {}, jQuery));        
+

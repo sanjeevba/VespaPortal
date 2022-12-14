@@ -158,10 +158,6 @@ $("#ees_applicationstatus").closest("td").hide();
       $("#MaximumLengthValidatorees_suta").closest("div").hide();
       $("#MaximumLengthValidatorees_applicantname").closest("div").hide();
       $("#MaximumLengthValidatorees_zipcode").closest("div").hide();
-
-      
-      
- 
 });
 
 
@@ -452,4 +448,3 @@ function sleep(milliseconds) {
     }
     webapi.safeAjax = safeAjax;
   }(window.webapi = window.webapi || {}, jQuery));        
-

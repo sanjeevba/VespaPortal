@@ -16,7 +16,12 @@ debugger; //Contact
 */
 
     var  tpguid = sessionStorage.getItem('requestGuid');
-    $('#liquid_form').attr('action', $('#liquid_form').attr('action')+ '&tpguid='+tpguid);
+    if (sessionStorage.getItem("tpguid_added") != 'true')
+    {
+        $('#liquid_form').attr('action', $('#liquid_form').attr('action')+ '&tpguid='+tpguid);
+        sessionStorage.setItem("tpguid_added", 'true');
+    }
+
     $('#ees_portaltpattached').closest("td").hide();
     $('#ees_portaltpattached_label').hide();
     $("#ees_email").closest("td").css("padding-bottom","0");

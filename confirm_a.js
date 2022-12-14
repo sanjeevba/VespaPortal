@@ -135,3 +135,4 @@ function getAssignmentData() {
 
     $(report).insertAfter(".tab-title");
 }
+
